@@ -107,7 +107,7 @@
       overflow-x: hidden;
     }
 
-    /* Ultra-faded background image overlay */
+    /* Fixed Background Image Overlay */
     body::before {
       content: '';
       position: fixed;
@@ -119,9 +119,9 @@
       background-repeat: no-repeat;
       background-position: center center;
       background-size: cover;
-      opacity: 0.12; /* Subtle, faded appearance */
+      opacity: 0.25; /* Adjusted to 0.25 for better visibility */
       pointer-events: none;
-      z-index: 0;
+      z-index: 1;
     }
 
     header, main, footer, .modal-backdrop, #toast {
@@ -285,7 +285,6 @@
 
     <!-- Action Bar -->
     <div class="flex items-center gap-2 sm:gap-3">
-      <!-- Volume Slider Popover/Toggle -->
       <div class="relative group flex items-center bg-[var(--board-bg)] border border-[var(--border-color)] rounded-md px-2.5 py-1.5 gap-2">
         <button id="audio-toggle-btn" title="Toggle Sound (M)" class="text-xs md:text-sm flex items-center gap-1.5 focus:outline-none">
           <i id="audio-icon" class="fa-solid fa-volume-high text-[var(--accent-color)]"></i>
@@ -474,8 +473,7 @@
 
         const now = audioCtx.currentTime;
 
-        // Layer 1: High crisp mechanical click (Noise Burst)
-        const bufferSize = audioCtx.sampleRate * 0.02; // 20ms click
+        const bufferSize = audioCtx.sampleRate * 0.02;
         const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < bufferSize; i++) {
@@ -485,7 +483,6 @@
         const noise = audioCtx.createBufferSource();
         noise.buffer = buffer;
 
-        // Randomized pitch/frequency filter per click for realistic variance
         const noiseFilter = audioCtx.createBiquadFilter();
         noiseFilter.type = 'bandpass';
         noiseFilter.frequency.setValueAtTime(1600 + (Math.random() * 600 - 300), now);
@@ -499,12 +496,10 @@
         noiseFilter.connect(noiseGain);
         noiseGain.connect(audioCtx.destination);
 
-        // Layer 2: Deeper mechanical flap thud (Oscillated Impact)
         const osc = audioCtx.createOscillator();
         const oscGain = audioCtx.createGain();
         
         osc.type = 'triangle';
-        // Subtle pitch variance
         const startFreq = 180 + (Math.random() * 40 - 20);
         osc.frequency.setValueAtTime(startFreq, now);
         osc.frequency.exponentialRampToValueAtTime(30, now + 0.03);
@@ -515,7 +510,6 @@
         osc.connect(oscGain);
         oscGain.connect(audioCtx.destination);
 
-        // Trigger sounds
         noise.start(now);
         osc.start(now);
         osc.stop(now + 0.03);
@@ -524,7 +518,6 @@
       }
     }
 
-    // Map each card element to its current rendered character
     const cards = {};
     const cardIds = ['d2', 'd1', 'd0', 'h1', 'h0', 'm1', 'm0', 's1', 's0'];
 
@@ -551,11 +544,9 @@
       const topHalf = card.el.querySelector('.top-half');
       const bottomHalf = card.el.querySelector('.bottom-half');
 
-      // Static background update
       topHalf.textContent = newValue;
       bottomHalf.textContent = oldValue;
 
-      // Dynamic flip leaves
       const flipTop = document.createElement('div');
       flipTop.className = 'flip-leaf top animate-top';
       flipTop.textContent = oldValue;
@@ -585,7 +576,6 @@
       const diff = currentTargetDate - now;
       const isPast = diff < 0;
 
-      // Update Status indicator
       const statusTag = document.getElementById('status-tag');
       const statusText = document.getElementById('status-text');
 
@@ -603,19 +593,16 @@
 
       const absDiff = Math.abs(diff);
 
-      // Math calculations for breakdown
       const days = Math.floor(absDiff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((absDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((absDiff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((absDiff % (1000 * 60)) / 1000);
 
-      // Pad numbers (supports 3 digit day overflow up to 999)
       const dStr = String(Math.min(days, 999)).padStart(3, '0');
       const hStr = String(hours).padStart(2, '0');
       const mStr = String(minutes).padStart(2, '0');
       const sStr = String(seconds).padStart(2, '0');
 
-      // Update individual digit flaps
       setCardValue('d2', dStr[0]);
       setCardValue('d1', dStr[1]);
       setCardValue('d0', dStr[2]);
@@ -642,7 +629,6 @@
       document.getElementById('main-title').textContent = timerTitle;
     }
 
-    // Audio volume & toggle controls
     const audioToggleBtn = document.getElementById('audio-toggle-btn');
     const audioIcon = document.getElementById('audio-icon');
     const volumeSlider = document.getElementById('volume-slider');
@@ -670,13 +656,11 @@
       }
     });
 
-    // Theme Switcher Logic
     function setTheme(themeName) {
       document.body.className = `theme-${themeName} min-h-screen flex flex-col justify-between items-center p-4 md:p-8`;
       saveStateToURL();
     }
 
-    // Quick Preset Application
     function applyPreset(presetKey) {
       const now = new Date();
       if (presetKey === '1h') {
@@ -697,7 +681,6 @@
       showToast('Preset target applied!');
     }
 
-    // Modal Control Logic
     const modal = document.getElementById('settings-modal');
     const settingsBtn = document.getElementById('settings-btn');
     
@@ -737,7 +720,6 @@
       showToast('Timer settings updated!');
     });
 
-    // URL Encoder & Link Share System
     function saveStateToURL() {
       const params = new URLSearchParams();
       params.set('t', currentTargetDate);
@@ -787,7 +769,6 @@
       document.body.removeChild(tempInput);
     });
 
-    // Fullscreen Toggle
     document.getElementById('fullscreen-btn').addEventListener('click', toggleFullscreen);
 
     function toggleFullscreen() {
@@ -802,7 +783,6 @@
       }
     }
 
-    // Keyboard Shortcuts
     window.addEventListener('keydown', (e) => {
       if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
 
@@ -816,7 +796,6 @@
       }
     });
 
-    // Toast System
     function showToast(msg) {
       const toast = document.getElementById('toast');
       const toastMsg = document.getElementById('toast-message');
@@ -827,7 +806,7 @@
       }, 3000);
     }
 
-    // Initialization
+    // Initialize Timer
     loadStateFromURL();
     updateTargetDateDisplay();
     updateBoard();
