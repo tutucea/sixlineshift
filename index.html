@@ -3,880 +3,128 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Six Line Shift - Split Flap Timer</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- SoundCloud Widget API -->
-  <script src="https://w.soundcloud.com/player/api.js"></script>
-  
+  <title>Audio Player</title>
   <style>
-    :root {
-      --bg-color: #0b0d10;
-      --board-bg: #14171d;
-      --card-bg: #1e222a;
-      --card-top-bg: #252a34;
-      --card-bottom-bg: #1c2028;
-      --text-color: #f0f3f8;
-      --accent-color: #ffaa00;
-      --accent-past: #00e5ff;
-      --border-color: #222731;
-      --hinge-color: #050607;
-      --subtext-color: #7a8b9e;
-      --label-color: #617185;
-      --shadow-color: rgba(0, 0, 0, 0.6);
-      --font-family: 'Courier New', Courier, monospace;
-    }
-
-    /* Solari Board Noir Theme */
-    body.theme-solari {
-      --bg-color: #0a0a0c;
-      --board-bg: #121318;
-      --card-bg: #191b22;
-      --card-top-bg: #20232d;
-      --card-bottom-bg: #161820;
-      --text-color: #e2e8f0;
-      --accent-color: #f59e0b;
-      --accent-past: #10b981;
-      --border-color: #262936;
-      --hinge-color: #060709;
-      --subtext-color: #64748b;
-      --label-color: #475569;
-      --shadow-color: rgba(0, 0, 0, 0.85);
-    }
-
-    /* Vintage Airport Theme */
-    body.theme-airport {
-      --bg-color: #121212;
-      --board-bg: #1e1e1e;
-      --card-bg: #2a2a2a;
-      --card-top-bg: #333333;
-      --card-bottom-bg: #222222;
-      --text-color: #ffcc00;
-      --accent-color: #ffcc00;
-      --accent-past: #00ff66;
-      --border-color: #383838;
-      --hinge-color: #111111;
-      --subtext-color: #a0a0a0;
-      --label-color: #888888;
-      --shadow-color: rgba(0, 0, 0, 0.9);
-    }
-
-    /* Cyberpunk Split Flap Theme */
-    body.theme-cyberpunk {
-      --bg-color: #05050f;
-      --board-bg: #0d0e26;
-      --card-bg: #14163c;
-      --card-top-bg: #1b1e52;
-      --card-bottom-bg: #111333;
-      --text-color: #00f0ff;
-      --accent-color: #ff0055;
-      --accent-past: #00f0ff;
-      --border-color: #2d3280;
-      --hinge-color: #03040c;
-      --subtext-color: #7077a1;
-      --label-color: #ff0055;
-      --shadow-color: rgba(255, 0, 85, 0.2);
-    }
-
-    /* Minimal Clean Theme */
-    body.theme-minimal {
-      --bg-color: #f4f6f8;
-      --board-bg: #ffffff;
-      --card-bg: #e2e8f0;
-      --card-top-bg: #edf2f7;
-      --card-bottom-bg: #cbd5e1;
-      --text-color: #0f172a;
-      --accent-color: #2563eb;
-      --accent-past: #059669;
-      --border-color: #cbd5e1;
-      --hinge-color: #64748b;
-      --subtext-color: #475569;
-      --label-color: #334155;
-      --shadow-color: rgba(0, 0, 0, 0.08);
-    }
-
     * {
       box-sizing: border-box;
-      user-select: none;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      font-family: var(--font-family);
-      transition: background-color 0.4s ease, color 0.4s ease;
-      position: relative;
-      overflow-x: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #121212;
+      color: #ffffff;
     }
 
-    /* Fixed Background Image Overlay */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image: url('phoenix_background_faded.jpg');
-      background-repeat: no-repeat;
-      background-position: center center;
-      background-size: cover;
-      opacity: 0.25;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    header, main, footer, .modal-backdrop, #toast {
-      position: relative;
-      z-index: 10;
-    }
-
-    .flap-card {
-      position: relative;
-      width: clamp(38px, 5.5vw, 75px);
-      height: clamp(58px, 8.5vw, 110px);
-      background-color: var(--card-bg);
-      border-radius: 6px;
-      font-size: clamp(2.4rem, 5.2vw, 4.8rem);
-      font-weight: 800;
-      color: var(--text-color);
-      perspective: 400px;
-      box-shadow: 0 8px 20px var(--shadow-color);
-      display: inline-block;
-    }
-
-    .top-half, .bottom-half {
-      position: absolute;
-      left: 0;
-      right: 0;
-      width: 100%;
-      height: 50%;
-      overflow: hidden;
-      background-color: var(--card-top-bg);
+    .player-card {
+      background: #1e1e1e;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
       text-align: center;
-      transition: background-color 0.3s ease;
+      width: 320px;
     }
 
-    .top-half {
-      top: 0;
-      border-top-left-radius: 6px;
-      border-top-right-radius: 6px;
-      border-bottom: 1px solid var(--hinge-color);
-      line-height: clamp(58px, 8.5vw, 110px);
+    .controls {
+      margin-top: 1.5rem;
     }
 
-    .bottom-half {
-      bottom: 0;
-      border-bottom-left-radius: 6px;
-      border-bottom-right-radius: 6px;
-      background-color: var(--card-bottom-bg);
-      line-height: 0px;
+    .audio-btn {
+      background-color: #ff5500;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.8rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
     }
 
-    .flip-leaf {
-      position: absolute;
-      left: 0;
-      right: 0;
-      width: 100%;
-      height: 50%;
-      overflow: hidden;
-      text-align: center;
-      backface-visibility: hidden;
-      transform-style: preserve-3d;
-      z-index: 5;
+    .audio-btn:hover {
+      background-color: #e64c00;
     }
 
-    .flip-leaf.top {
-      top: 0;
-      border-top-left-radius: 6px;
-      border-top-right-radius: 6px;
-      background-color: var(--card-top-bg);
-      line-height: clamp(58px, 8.5vw, 110px);
-      transform-origin: bottom;
-      border-bottom: 1px solid var(--hinge-color);
+    .audio-btn:active {
+      transform: scale(0.98);
     }
 
-    .flip-leaf.bottom {
-      bottom: 0;
-      border-bottom-left-radius: 6px;
-      border-bottom-right-radius: 6px;
-      background-color: var(--card-bottom-bg);
-      line-height: 0px;
-      transform-origin: top;
+    .status {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: #b3b3b3;
     }
 
-    /* Center Hinge Line */
-    .flap-card::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background-color: var(--hinge-color);
-      z-index: 10;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.5);
-    }
-
-    /* Split flap side notch effects */
-    .flap-card::before {
-      content: '';
-      position: absolute;
-      top: calc(50% - 3px);
-      left: -2px;
-      right: -2px;
-      height: 6px;
-      z-index: 11;
-      pointer-events: none;
-      background: radial-gradient(circle at left, transparent 2px, var(--hinge-color) 3px),
-                  radial-gradient(circle at right, transparent 2px, var(--hinge-color) 3px);
-      background-size: 50% 100%;
-      background-repeat: no-repeat;
-      background-position: left center, right center;
-    }
-
-    .animate-top {
-      animation: flipTop 0.12s ease-in forwards;
-    }
-
-    .animate-bottom {
-      animation: flipBottom 0.12s ease-out forwards;
-    }
-
-    @keyframes flipTop {
-      0% { 
-        transform: rotateX(0deg); 
-        filter: brightness(1);
-      }
-      100% { 
-        transform: rotateX(-90deg); 
-        filter: brightness(0.6);
-      }
-    }
-
-    @keyframes flipBottom {
-      0% { 
-        transform: rotateX(90deg); 
-        filter: brightness(0.7);
-      }
-      100% { 
-        transform: rotateX(0deg); 
-        filter: brightness(1);
-      }
-    }
-
-    .modal-backdrop {
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(6px);
+    /* Keep the SoundCloud iframe invisible */
+    #sc-player {
+      display: none;
     }
   </style>
 </head>
-<body class="theme-solari min-h-screen flex flex-col justify-between items-center p-4 md:p-8">
+<body>
 
-  <!-- Hidden SoundCloud Embed Frame -->
-  <iframe id="sc-player" 
-          style="display:none;" 
-          allow="autoplay" 
-          src="https://w.soundcloud.com/player/?url=https%3A//on.soundcloud.com/AtbB9FqKxN82h4nYfn&auto_play=true&loop=true&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=false">
+  <div class="player-card">
+    <h2>Audio Control</h2>
+    
+    <div class="controls">
+      <button id="toggle-btn" class="audio-btn">Play</button>
+    </div>
+
+    <div id="status" class="status">Click Play to start audio</div>
+  </div>
+
+  <!-- Embedded Invisible SoundCloud Player -->
+  <iframe 
+    id="sc-player" 
+    src="https://on.soundcloud.com/vyCyS0Dli8TZjmee37&auto_play=false" 
+    allow="autoplay">
   </iframe>
 
-  <header class="w-full max-w-5xl flex justify-between items-center mb-4 sm:mb-6">
-    <div class="flex items-center space-x-3">
-      <div class="p-2 rounded-lg bg-[var(--board-bg)] border border-[var(--border-color)] shadow-md">
-        <i class="fa-solid fa-clock-rotate-left text-[var(--accent-color)] text-xl"></i>
-      </div>
-      <div>
-        <span class="text-xs md:text-sm font-bold tracking-widest uppercase opacity-90 block" id="header-brand">SIX LINE SHIFT</span>
-        <span class="text-[10px] text-[var(--subtext-color)] tracking-wider">MECHANICAL FLAP TIMER</span>
-      </div>
-    </div>
-
-    <!-- Action Bar -->
-    <div class="flex items-center gap-2 sm:gap-3">
-      <!-- Background Music Toggle -->
-      <button id="bg-music-btn" title="Toggle Background Music" class="px-2.5 py-1.5 rounded-md bg-[var(--board-bg)] border border-[var(--border-color)] hover:border-[var(--accent-color)] text-xs md:text-sm transition flex items-center gap-1.5">
-        <i id="bg-music-icon" class="fa-solid fa-music text-[var(--subtext-color)]"></i>
-        <span class="hidden sm:inline font-semibold">Music</span>
-      </button>
-
-      <!-- Mechanical Audio Controls -->
-      <div class="relative group flex items-center bg-[var(--board-bg)] border border-[var(--border-color)] rounded-md px-2.5 py-1.5 gap-2">
-        <button id="audio-toggle-btn" title="Toggle Mechanical Sound (M)" class="text-xs md:text-sm flex items-center gap-1.5 focus:outline-none">
-          <i id="audio-icon" class="fa-solid fa-volume-high text-[var(--accent-color)]"></i>
-        </button>
-        <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.5" class="w-12 sm:w-16 h-1 bg-[var(--border-color)] rounded-lg appearance-none cursor-pointer accent-[var(--accent-color)]" title="Volume Control">
-      </div>
-
-      <button id="settings-btn" title="Configure Settings (S)" class="px-3 py-2 rounded-md bg-[var(--board-bg)] border border-[var(--border-color)] hover:border-[var(--accent-color)] text-xs md:text-sm transition flex items-center gap-2">
-        <i class="fa-solid fa-sliders text-[var(--accent-color)]"></i>
-        <span class="hidden sm:inline font-semibold">Config</span>
-      </button>
-
-      <button id="share-btn" title="Share Timer Link" class="px-3 py-2 rounded-md bg-[var(--board-bg)] border border-[var(--border-color)] hover:border-[var(--accent-color)] text-xs md:text-sm transition flex items-center gap-2">
-        <i class="fa-solid fa-share-nodes text-blue-400"></i>
-        <span class="hidden sm:inline font-semibold">Share</span>
-      </button>
-
-      <button id="fullscreen-btn" title="Toggle Fullscreen (Space)" class="px-3 py-2 rounded-md bg-[var(--board-bg)] border border-[var(--border-color)] hover:border-[var(--accent-color)] text-xs md:text-sm transition">
-        <i class="fa-solid fa-expand"></i>
-      </button>
-    </div>
-  </header>
-
-  <main class="w-full max-w-5xl flex flex-col items-center justify-center my-auto py-4 sm:py-6">
-    
-    <!-- Title & Status Section -->
-    <div class="header-panel text-center mb-6 sm:mb-10">
-      <h1 id="main-title" class="text-base sm:text-xl md:text-2xl font-bold tracking-[0.25em] text-[var(--subtext-color)] uppercase mb-3 transition-colors">
-        SIX LINE SHIFT
-      </h1>
-      
-      <div id="status-tag" class="status-indicator inline-flex items-center gap-2 px-4 py-1.5 rounded bg-amber-500/10 border border-[var(--accent-color)] text-[var(--accent-color)] font-bold tracking-[0.2em] text-xs sm:text-base mb-3 shadow-lg transition-colors">
-        <span id="status-ping" class="w-2 h-2 rounded-full bg-[var(--accent-color)] animate-ping"></span>
-        <span id="status-text">T-MINUS</span>
-      </div>
-      
-      <div id="target-date-display" class="target-date text-[11px] sm:text-xs md:text-sm text-[var(--subtext-color)] tracking-widest uppercase font-semibold">
-        TARGET: FEB 15, 2027 • 22:10:00 UTC
-      </div>
-    </div>
-
-    <!-- Main Split-Flap Display Board -->
-    <div class="board bg-[var(--board-bg)] p-4 sm:p-6 md:p-10 rounded-2xl border-2 border-[var(--border-color)] shadow-2xl flex flex-wrap justify-center gap-3 sm:gap-6 md:gap-8 transition-colors duration-300">
-      
-      <!-- DAYS (3 Digits) -->
-      <div class="group flex flex-col items-center gap-2 sm:gap-3">
-        <div class="digits-container flex gap-1 sm:gap-2">
-          <div class="flap-card" id="d2"></div>
-          <div class="flap-card" id="d1"></div>
-          <div class="flap-card" id="d0"></div>
-        </div>
-        <div class="group-label text-[10px] sm:text-xs font-bold tracking-[0.3em] text-[var(--label-color)] uppercase">DAYS</div>
-      </div>
-
-      <!-- HOURS (2 Digits) -->
-      <div class="group flex flex-col items-center gap-2 sm:gap-3">
-        <div class="digits-container flex gap-1 sm:gap-2">
-          <div class="flap-card" id="h1"></div>
-          <div class="flap-card" id="h0"></div>
-        </div>
-        <div class="group-label text-[10px] sm:text-xs font-bold tracking-[0.3em] text-[var(--label-color)] uppercase">HOURS</div>
-      </div>
-
-      <!-- MINUTES (2 Digits) -->
-      <div class="group flex flex-col items-center gap-2 sm:gap-3">
-        <div class="digits-container flex gap-1 sm:gap-2">
-          <div class="flap-card" id="m1"></div>
-          <div class="flap-card" id="m0"></div>
-        </div>
-        <div class="group-label text-[10px] sm:text-xs font-bold tracking-[0.3em] text-[var(--label-color)] uppercase">MINS</div>
-      </div>
-
-      <!-- SECONDS (2 Digits) -->
-      <div class="group flex flex-col items-center gap-2 sm:gap-3">
-        <div class="digits-container flex gap-1 sm:gap-2">
-          <div class="flap-card" id="s1"></div>
-          <div class="flap-card" id="s0"></div>
-        </div>
-        <div class="group-label text-[10px] sm:text-xs font-bold tracking-[0.3em] text-[var(--label-color)] uppercase">SECS</div>
-      </div>
-
-    </div>
-
-    <!-- Quick Presets -->
-    <div class="mt-6 sm:mt-8 flex flex-wrap justify-center gap-2 max-w-2xl px-4">
-      <button onclick="applyPreset('1h')" class="px-3 py-1.5 text-[11px] sm:text-xs rounded-full bg-[var(--board-bg)] border border-[var(--border-color)] hover:border-[var(--accent-color)] transition opacity-80 hover:opacity-100 font-semibold">+1 Hour</button>
-      <button onclick="applyPreset('24h')" class="px-3 py-1.5 text-[11px] sm:text-xs rounded-full bg-[var(--board-bg)] border border-[var(--border-color)] hover:border-[var(--accent-color)] transition opacity-80 hover:opacity-100 font-semibold">+24 Hours</button>
-      <button onclick="applyPreset('7d')" class="px-3 py-1.5 text-[11px] sm:text-xs rounded-full bg-[var(--board-bg)] border border-[var(--border-color)] hover:border-[var(--accent-color)] transition opacity-80 hover:opacity-100 font-semibold">+7 Days</button>
-      <button onclick="applyPreset('newyear')" class="px-3 py-1.5 text-[11px] sm:text-xs rounded-full bg-[var(--board-bg)] border border-[var(--border-color)] hover:border-[var(--accent-color)] transition opacity-80 hover:opacity-100 font-semibold">Next New Year</button>
-      <button onclick="applyPreset('default')" class="px-3 py-1.5 text-[11px] sm:text-xs rounded-full bg-[var(--board-bg)] border border-[var(--border-color)] hover:border-[var(--accent-color)] transition opacity-80 hover:opacity-100 font-semibold">Feb 15, 2027</button>
-    </div>
-  </main>
-
-  <footer class="w-full max-w-5xl text-center text-[10px] sm:text-xs text-[var(--subtext-color)] py-4 opacity-70 flex justify-between items-center px-2">
-    <span>Shortcuts: <kbd class="px-1.5 py-0.5 rounded bg-[var(--board-bg)] border border-[var(--border-color)]">Space</kbd> Fullscreen • <kbd class="px-1.5 py-0.5 rounded bg-[var(--board-bg)] border border-[var(--border-color)]">M</kbd> Mute • <kbd class="px-1.5 py-0.5 rounded bg-[var(--board-bg)] border border-[var(--border-color)]">S</kbd> Settings</span>
-    <span>Web Split Flap v2.0</span>
-  </footer>
-
-  <div id="settings-modal" class="fixed inset-0 modal-backdrop hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-[var(--board-bg)] border-2 border-[var(--border-color)] text-[var(--text-color)] rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-5">
-      
-      <div class="flex justify-between items-center border-b border-[var(--border-color)] pb-3">
-        <h3 class="text-base font-bold tracking-wider flex items-center gap-2">
-          <i class="fa-solid fa-gear text-[var(--accent-color)]"></i>
-          TIMER CONFIGURATION
-        </h3>
-        <button id="close-modal-btn" class="p-1 text-gray-400 hover:text-white transition">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-
-      <!-- Config Form -->
-      <div class="space-y-4 text-xs sm:text-sm">
-        <div>
-          <label class="block text-[10px] uppercase tracking-widest text-[var(--subtext-color)] font-bold mb-1">Title / Event Name</label>
-          <input type="text" id="input-title" class="w-full bg-[var(--bg-color)] border border-[var(--border-color)] rounded p-2.5 text-xs focus:outline-none focus:border-[var(--accent-color)]" placeholder="SIX LINE SHIFT">
-        </div>
-
-        <div>
-          <label class="block text-[10px] uppercase tracking-widest text-[var(--subtext-color)] font-bold mb-1">Target Date & Time</label>
-          <input type="datetime-local" id="input-datetime" class="w-full bg-[var(--bg-color)] border border-[var(--border-color)] rounded p-2.5 text-xs focus:outline-none focus:border-[var(--accent-color)] text-[var(--text-color)]">
-        </div>
-
-        <div>
-          <label class="block text-[10px] uppercase tracking-widest text-[var(--subtext-color)] font-bold mb-1">Time Mode</label>
-          <select id="input-timezone" class="w-full bg-[var(--bg-color)] border border-[var(--border-color)] rounded p-2.5 text-xs focus:outline-none focus:border-[var(--accent-color)] text-[var(--text-color)]">
-            <option value="utc">UTC Time</option>
-            <option value="local">Local Time Zone</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-[10px] uppercase tracking-widest text-[var(--subtext-color)] font-bold mb-2">Visual Theme</label>
-          <div class="grid grid-cols-2 gap-2">
-            <button type="button" onclick="setTheme('solari')" class="p-2 border rounded text-[11px] text-left bg-[#121318] text-[#f59e0b] border-[#262936] hover:opacity-90 font-semibold">
-              Solari Board
-            </button>
-            <button type="button" onclick="setTheme('airport')" class="p-2 border rounded text-[11px] text-left bg-[#1e1e1e] text-[#ffcc00] border-[#383838] hover:opacity-90 font-semibold">
-              Vintage Airport
-            </button>
-            <button type="button" onclick="setTheme('cyberpunk')" class="p-2 border rounded text-[11px] text-left bg-[#0d0e26] text-[#ff0055] border-[#2d3280] hover:opacity-90 font-semibold">
-              Cyberpunk LED
-            </button>
-            <button type="button" onclick="setTheme('minimal')" class="p-2 border rounded text-[11px] text-left bg-[#ffffff] text-[#2563eb] border-[#cbd5e1] hover:opacity-90 font-semibold">
-              Minimal Clean
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Actions -->
-      <div class="flex justify-end gap-3 pt-3 border-t border-[var(--border-color)]">
-        <button id="cancel-modal-btn" class="px-4 py-2 rounded text-xs border border-[var(--border-color)] hover:bg-[var(--bg-color)] font-semibold">Cancel</button>
-        <button id="save-modal-btn" class="px-5 py-2 rounded text-xs bg-[var(--accent-color)] text-black font-bold hover:opacity-90">Save Changes</button>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Notification Toast -->
-  <div id="toast" class="fixed bottom-6 right-6 bg-[var(--board-bg)] border border-[var(--accent-color)] text-[var(--text-color)] px-4 py-3 rounded-lg shadow-xl translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-3">
-    <i class="fa-solid fa-circle-check text-[var(--accent-color)]"></i>
-    <span id="toast-message" class="text-xs font-semibold tracking-wide">Copied shareable URL to clipboard!</span>
-  </div>
+  <!-- SoundCloud Widget API Library -->
+  <script src="https://w.soundcloud.com/player/api.js"></script>
 
   <script>
-    // Target: Default Feb 15, 2027 22:10:00 UTC
-    let currentTargetDate = new Date(Date.UTC(2027, 1, 15, 22, 10, 0)).getTime();
-    let timerTitle = "SIX LINE SHIFT";
-    let isAudioMuted = false;
-    let masterVolume = 0.5;
-    let isUtcMode = true;
-    let audioCtx = null;
-
-    /* SoundCloud Background Player Controller */
-    let scWidget = null;
-    let isMusicPlaying = false;
-
-    window.addEventListener('load', () => {
+    document.addEventListener('DOMContentLoaded', () => {
       const iframe = document.getElementById('sc-player');
-      scWidget = SC.Widget(iframe);
+      const widget = SC.Widget(iframe);
+      const toggleBtn = document.getElementById('toggle-btn');
+      const statusText = document.getElementById('status');
 
-      scWidget.bind(SC.Widget.Events.READY, () => {
-        scWidget.setVolume(50);
-        // Attempt autoplay on start
-        scWidget.play();
+      let isPlaying = false;
+
+      // Event listener for the Play/Stop button
+      toggleBtn.addEventListener('click', () => {
+        widget.toggle();
       });
 
-      scWidget.bind(SC.Widget.Events.PLAY, () => {
-        isMusicPlaying = true;
-        updateMusicIcon();
+      // Handle SoundCloud API events to keep UI state in sync
+      widget.bind(SC.Widget.Events.PLAY, () => {
+        isPlaying = true;
+        toggleBtn.textContent = 'Stop';
+        toggleBtn.style.backgroundColor = '#d32f2f'; // Red for stop
+        statusText.textContent = 'Now Playing...';
       });
 
-      scWidget.bind(SC.Widget.Events.PAUSE, () => {
-        isMusicPlaying = false;
-        updateMusicIcon();
-      });
-    });
-
-    const bgMusicBtn = document.getElementById('bg-music-btn');
-    const bgMusicIcon = document.getElementById('bg-music-icon');
-
-    bgMusicBtn.addEventListener('click', () => {
-      if (!scWidget) return;
-      scWidget.toggle();
-    });
-
-    function updateMusicIcon() {
-      if (isMusicPlaying) {
-        bgMusicIcon.className = 'fa-solid fa-music text-[var(--accent-color)] animate-pulse';
-      } else {
-        bgMusicIcon.className = 'fa-solid fa-music text-[var(--subtext-color)]';
-      }
-    }
-
-    // Auto-resume background audio on first user click if browser blocked autoplay
-    document.addEventListener('click', () => {
-      if (scWidget && !isMusicPlaying) {
-        scWidget.play();
-      }
-    }, { once: true });
-
-    /* Multi-layered Web Audio Synthesizer for Mechanical Split-Flap Sound */
-    function playFlapSound() {
-      if (isAudioMuted || masterVolume <= 0) return;
-
-      try {
-        if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
-
-        const now = audioCtx.currentTime;
-
-        const bufferSize = audioCtx.sampleRate * 0.02;
-        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-          data[i] = Math.random() * 2 - 1;
-        }
-
-        const noise = audioCtx.createBufferSource();
-        noise.buffer = buffer;
-
-        const noiseFilter = audioCtx.createBiquadFilter();
-        noiseFilter.type = 'bandpass';
-        noiseFilter.frequency.setValueAtTime(1600 + (Math.random() * 600 - 300), now);
-        noiseFilter.Q.setValueAtTime(4, now);
-
-        const noiseGain = audioCtx.createGain();
-        noiseGain.gain.setValueAtTime(masterVolume * 0.35, now);
-        noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
-
-        noise.connect(noiseFilter);
-        noiseFilter.connect(noiseGain);
-        noiseGain.connect(audioCtx.destination);
-
-        const osc = audioCtx.createOscillator();
-        const oscGain = audioCtx.createGain();
-        
-        osc.type = 'triangle';
-        const startFreq = 180 + (Math.random() * 40 - 20);
-        osc.frequency.setValueAtTime(startFreq, now);
-        osc.frequency.exponentialRampToValueAtTime(30, now + 0.03);
-
-        oscGain.gain.setValueAtTime(masterVolume * 0.4, now);
-        oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
-
-        osc.connect(oscGain);
-        oscGain.connect(audioCtx.destination);
-
-        noise.start(now);
-        osc.start(now);
-        osc.stop(now + 0.03);
-      } catch (e) {
-        // Handle audio context restrictions gracefully
-      }
-    }
-
-    const cards = {};
-    const cardIds = ['d2', 'd1', 'd0', 'h1', 'h0', 'm1', 'm0', 's1', 's0'];
-
-    cardIds.forEach(id => {
-      const element = document.getElementById(id);
-      cards[id] = {
-        el: element,
-        value: null
-      };
-      
-      element.innerHTML = `
-        <div class="top-half"></div>
-        <div class="bottom-half"></div>
-      `;
-    });
-
-    function setCardValue(id, newValue) {
-      const card = cards[id];
-      if (card.value === newValue) return;
-
-      const oldValue = card.value !== null ? card.value : newValue;
-      card.value = newValue;
-
-      const topHalf = card.el.querySelector('.top-half');
-      const bottomHalf = card.el.querySelector('.bottom-half');
-
-      topHalf.textContent = newValue;
-      bottomHalf.textContent = oldValue;
-
-      const flipTop = document.createElement('div');
-      flipTop.className = 'flip-leaf top animate-top';
-      flipTop.textContent = oldValue;
-
-      const flipBottom = document.createElement('div');
-      flipBottom.className = 'flip-leaf bottom';
-      flipBottom.textContent = newValue;
-
-      card.el.appendChild(flipTop);
-
-      playFlapSound();
-
-      flipTop.addEventListener('animationend', () => {
-        flipTop.remove();
-        card.el.appendChild(flipBottom);
-        flipBottom.classList.add('animate-bottom');
+      widget.bind(SC.Widget.Events.PAUSE, () => {
+        isPlaying = false;
+        toggleBtn.textContent = 'Play';
+        toggleBtn.style.backgroundColor = '#ff5500'; // SoundCloud orange for play
+        statusText.textContent = 'Paused';
       });
 
-      flipBottom.addEventListener('animationend', () => {
-        bottomHalf.textContent = newValue;
-        flipBottom.remove();
+      widget.bind(SC.Widget.Events.FINISH, () => {
+        isPlaying = false;
+        toggleBtn.textContent = 'Play';
+        toggleBtn.style.backgroundColor = '#ff5500';
+        statusText.textContent = 'Finished';
       });
-    }
-
-    function updateBoard() {
-      const now = new Date().getTime();
-      const diff = currentTargetDate - now;
-      const isPast = diff < 0;
-
-      const statusTag = document.getElementById('status-tag');
-      const statusText = document.getElementById('status-text');
-
-      if (isPast) {
-        statusText.textContent = 'T-PLUS';
-        statusTag.style.borderColor = 'var(--accent-past)';
-        statusTag.style.color = 'var(--accent-past)';
-        statusTag.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
-      } else {
-        statusText.textContent = 'T-MINUS';
-        statusTag.style.borderColor = 'var(--accent-color)';
-        statusTag.style.color = 'var(--accent-color)';
-        statusTag.style.backgroundColor = 'rgba(245, 158, 11, 0.1)';
-      }
-
-      const absDiff = Math.abs(diff);
-
-      const days = Math.floor(absDiff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((absDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((absDiff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((absDiff % (1000 * 60)) / 1000);
-
-      const dStr = String(Math.min(days, 999)).padStart(3, '0');
-      const hStr = String(hours).padStart(2, '0');
-      const mStr = String(minutes).padStart(2, '0');
-      const sStr = String(seconds).padStart(2, '0');
-
-      setCardValue('d2', dStr[0]);
-      setCardValue('d1', dStr[1]);
-      setCardValue('d0', dStr[2]);
-
-      setCardValue('h1', hStr[0]);
-      setCardValue('h0', hStr[1]);
-
-      setCardValue('m1', mStr[0]);
-      setCardValue('m0', mStr[1]);
-
-      setCardValue('s1', sStr[0]);
-      setCardValue('s0', sStr[1]);
-    }
-
-    function updateTargetDateDisplay() {
-      const targetObj = new Date(currentTargetDate);
-      let dateString = '';
-      if (isUtcMode) {
-        dateString = targetObj.toUTCString().replace('GMT', 'UTC');
-      } else {
-        dateString = targetObj.toString();
-      }
-      document.getElementById('target-date-display').textContent = `TARGET: ${dateString.toUpperCase()}`;
-      document.getElementById('main-title').textContent = timerTitle;
-    }
-
-    const audioToggleBtn = document.getElementById('audio-toggle-btn');
-    const audioIcon = document.getElementById('audio-icon');
-    const volumeSlider = document.getElementById('volume-slider');
-
-    audioToggleBtn.addEventListener('click', toggleMute);
-
-    function toggleMute() {
-      isAudioMuted = !isAudioMuted;
-      if (isAudioMuted) {
-        audioIcon.className = 'fa-solid fa-volume-xmark text-red-400';
-      } else {
-        audioIcon.className = 'fa-solid fa-volume-high text-[var(--accent-color)]';
-        playFlapSound();
-      }
-    }
-
-    volumeSlider.addEventListener('input', (e) => {
-      masterVolume = parseFloat(e.target.value);
-      if (masterVolume === 0) {
-        isAudioMuted = true;
-        audioIcon.className = 'fa-solid fa-volume-xmark text-red-400';
-      } else {
-        isAudioMuted = false;
-        audioIcon.className = 'fa-solid fa-volume-high text-[var(--accent-color)]';
-      }
-      if (scWidget) {
-        scWidget.setVolume(masterVolume * 100);
-      }
     });
-
-    function setTheme(themeName) {
-      document.body.className = `theme-${themeName} min-h-screen flex flex-col justify-between items-center p-4 md:p-8`;
-      saveStateToURL();
-    }
-
-    function applyPreset(presetKey) {
-      const now = new Date();
-      if (presetKey === '1h') {
-        currentTargetDate = now.getTime() + (60 * 60 * 1000);
-      } else if (presetKey === '24h') {
-        currentTargetDate = now.getTime() + (24 * 60 * 60 * 1000);
-      } else if (presetKey === '7d') {
-        currentTargetDate = now.getTime() + (7 * 24 * 60 * 60 * 1000);
-      } else if (presetKey === 'newyear') {
-        const nextYear = now.getUTCFullYear() + 1;
-        currentTargetDate = Date.UTC(nextYear, 0, 1, 0, 0, 0);
-      } else if (presetKey === 'default') {
-        currentTargetDate = Date.UTC(2027, 1, 15, 22, 10, 0);
-      }
-      updateTargetDateDisplay();
-      updateBoard();
-      saveStateToURL();
-      showToast('Preset target applied!');
-    }
-
-    const modal = document.getElementById('settings-modal');
-    const settingsBtn = document.getElementById('settings-btn');
-    
-    settingsBtn.addEventListener('click', openSettings);
-
-    function openSettings() {
-      document.getElementById('input-title').value = timerTitle;
-      const localDate = new Date(currentTargetDate);
-      localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset());
-      document.getElementById('input-datetime').value = localDate.toISOString().slice(0, 16);
-      document.getElementById('input-timezone').value = isUtcMode ? 'utc' : 'local';
-      modal.classList.remove('hidden');
-    }
-
-    document.getElementById('close-modal-btn').addEventListener('click', () => modal.classList.add('hidden'));
-    document.getElementById('cancel-modal-btn').addEventListener('click', () => modal.classList.add('hidden'));
-
-    document.getElementById('save-modal-btn').addEventListener('click', () => {
-      const titleInput = document.getElementById('input-title').value.trim();
-      const datetimeInput = document.getElementById('input-datetime').value;
-      const timezoneInput = document.getElementById('input-timezone').value;
-
-      if (titleInput) {
-        timerTitle = titleInput.toUpperCase();
-      }
-
-      if (datetimeInput) {
-        currentTargetDate = new Date(datetimeInput).getTime();
-      }
-
-      isUtcMode = (timezoneInput === 'utc');
-
-      updateTargetDateDisplay();
-      updateBoard();
-      saveStateToURL();
-      modal.classList.add('hidden');
-      showToast('Timer settings updated!');
-    });
-
-    function saveStateToURL() {
-      const params = new URLSearchParams();
-      params.set('t', currentTargetDate);
-      params.set('title', timerTitle);
-      
-      let theme = 'solari';
-      if (document.body.classList.contains('theme-airport')) theme = 'airport';
-      if (document.body.classList.contains('theme-cyberpunk')) theme = 'cyberpunk';
-      if (document.body.classList.contains('theme-minimal')) theme = 'minimal';
-      params.set('theme', theme);
-      params.set('tz', isUtcMode ? 'utc' : 'local');
-
-      window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
-    }
-
-    function loadStateFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      if (params.has('t')) {
-        const parsedT = parseInt(params.get('t'), 10);
-        if (!isNaN(parsedT)) currentTargetDate = parsedT;
-      }
-      if (params.has('title')) {
-        timerTitle = params.get('title');
-      }
-      if (params.has('theme')) {
-        setTheme(params.get('theme'));
-      }
-      if (params.has('tz')) {
-        isUtcMode = params.get('tz') === 'utc';
-      }
-    }
-
-    document.getElementById('share-btn').addEventListener('click', () => {
-      saveStateToURL();
-      const currentUrl = window.location.href;
-
-      const tempInput = document.createElement('input');
-      tempInput.value = currentUrl;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      try {
-        document.execCommand('copy');
-        showToast('Shareable link copied to clipboard!');
-      } catch (err) {
-        showToast('Failed to copy link.');
-      }
-      document.body.removeChild(tempInput);
-    });
-
-    document.getElementById('fullscreen-btn').addEventListener('click', toggleFullscreen);
-
-    function toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(() => {
-          showToast('Fullscreen mode restricted.');
-        });
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        }
-      }
-    }
-
-    window.addEventListener('keydown', (e) => {
-      if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
-
-      if (e.code === 'Space') {
-        e.preventDefault();
-        toggleFullscreen();
-      } else if (e.key.toLowerCase() === 'm') {
-        toggleMute();
-      } else if (e.key.toLowerCase() === 's') {
-        openSettings();
-      }
-    });
-
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toast-message');
-      toastMsg.textContent = msg;
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0');
-      }, 3000);
-    }
-
-    // Initialize Timer
-    loadStateFromURL();
-    updateTargetDateDisplay();
-    updateBoard();
-    setInterval(updateBoard, 1000);
   </script>
+
 </body>
 </html>
