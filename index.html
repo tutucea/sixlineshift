@@ -6,6 +6,8 @@
   <title>Six Line Shift - Split Flap Timer</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- SoundCloud Widget API -->
+  <script src="https://w.soundcloud.com/player/api.js"></script>
   
   <style>
     :root {
@@ -119,7 +121,7 @@
       background-repeat: no-repeat;
       background-position: center center;
       background-size: cover;
-      opacity: 0.25; /* Adjusted to 0.25 for better visibility */
+      opacity: 0.25;
       pointer-events: none;
       z-index: 1;
     }
@@ -233,7 +235,6 @@
       background-position: left center, right center;
     }
 
-    /* Flip Keyframes with Shadow Overlay */
     .animate-top {
       animation: flipTop 0.12s ease-in forwards;
     }
@@ -272,6 +273,13 @@
 </head>
 <body class="theme-solari min-h-screen flex flex-col justify-between items-center p-4 md:p-8">
 
+  <!-- Hidden SoundCloud Embed Frame -->
+  <iframe id="sc-player" 
+          style="display:none;" 
+          allow="autoplay" 
+          src="https://w.soundcloud.com/player/?url=https%3A//on.soundcloud.com/AtbB9FqKxN82h4nYfn&auto_play=true&loop=true&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=false">
+  </iframe>
+
   <header class="w-full max-w-5xl flex justify-between items-center mb-4 sm:mb-6">
     <div class="flex items-center space-x-3">
       <div class="p-2 rounded-lg bg-[var(--board-bg)] border border-[var(--border-color)] shadow-md">
@@ -285,8 +293,15 @@
 
     <!-- Action Bar -->
     <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Background Music Toggle -->
+      <button id="bg-music-btn" title="Toggle Background Music" class="px-2.5 py-1.5 rounded-md bg-[var(--board-bg)] border border-[var(--border-color)] hover:border-[var(--accent-color)] text-xs md:text-sm transition flex items-center gap-1.5">
+        <i id="bg-music-icon" class="fa-solid fa-music text-[var(--subtext-color)]"></i>
+        <span class="hidden sm:inline font-semibold">Music</span>
+      </button>
+
+      <!-- Mechanical Audio Controls -->
       <div class="relative group flex items-center bg-[var(--board-bg)] border border-[var(--border-color)] rounded-md px-2.5 py-1.5 gap-2">
-        <button id="audio-toggle-btn" title="Toggle Sound (M)" class="text-xs md:text-sm flex items-center gap-1.5 focus:outline-none">
+        <button id="audio-toggle-btn" title="Toggle Mechanical Sound (M)" class="text-xs md:text-sm flex items-center gap-1.5 focus:outline-none">
           <i id="audio-icon" class="fa-solid fa-volume-high text-[var(--accent-color)]"></i>
         </button>
         <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.5" class="w-12 sm:w-16 h-1 bg-[var(--border-color)] rounded-lg appearance-none cursor-pointer accent-[var(--accent-color)]" title="Volume Control">
@@ -458,6 +473,54 @@
     let masterVolume = 0.5;
     let isUtcMode = true;
     let audioCtx = null;
+
+    /* SoundCloud Background Player Controller */
+    let scWidget = null;
+    let isMusicPlaying = false;
+
+    window.addEventListener('load', () => {
+      const iframe = document.getElementById('sc-player');
+      scWidget = SC.Widget(iframe);
+
+      scWidget.bind(SC.Widget.Events.READY, () => {
+        scWidget.setVolume(50);
+        // Attempt autoplay on start
+        scWidget.play();
+      });
+
+      scWidget.bind(SC.Widget.Events.PLAY, () => {
+        isMusicPlaying = true;
+        updateMusicIcon();
+      });
+
+      scWidget.bind(SC.Widget.Events.PAUSE, () => {
+        isMusicPlaying = false;
+        updateMusicIcon();
+      });
+    });
+
+    const bgMusicBtn = document.getElementById('bg-music-btn');
+    const bgMusicIcon = document.getElementById('bg-music-icon');
+
+    bgMusicBtn.addEventListener('click', () => {
+      if (!scWidget) return;
+      scWidget.toggle();
+    });
+
+    function updateMusicIcon() {
+      if (isMusicPlaying) {
+        bgMusicIcon.className = 'fa-solid fa-music text-[var(--accent-color)] animate-pulse';
+      } else {
+        bgMusicIcon.className = 'fa-solid fa-music text-[var(--subtext-color)]';
+      }
+    }
+
+    // Auto-resume background audio on first user click if browser blocked autoplay
+    document.addEventListener('click', () => {
+      if (scWidget && !isMusicPlaying) {
+        scWidget.play();
+      }
+    }, { once: true });
 
     /* Multi-layered Web Audio Synthesizer for Mechanical Split-Flap Sound */
     function playFlapSound() {
@@ -653,6 +716,9 @@
       } else {
         isAudioMuted = false;
         audioIcon.className = 'fa-solid fa-volume-high text-[var(--accent-color)]';
+      }
+      if (scWidget) {
+        scWidget.setVolume(masterVolume * 100);
       }
     });
 
